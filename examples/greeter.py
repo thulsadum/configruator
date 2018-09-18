@@ -1,21 +1,3 @@
-# configruator
-
-A simple configuration injector based on configparser using function decorators and keyword arguments.
-
-In fact the idea is so simple and straight forward, that I believe someone has written something like that before.
-
-
-## Installation
-
-
-
-
-## Example
-
-
-From `examples/greeter.py`:
-
-```python
 import sys, os, tempfile
 from configurator import Config, read_config_file
 
@@ -42,4 +24,4 @@ if __name__ == '__main__':
         os.unlink(tmp)
     else:
         print('Keeping temp file.')
-```
+
