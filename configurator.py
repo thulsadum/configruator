@@ -2,6 +2,7 @@
 
 from configparser import ConfigParser
 from functools import wraps
+import os
 
 # DEFAULT_CONFIG = ConfigParser()
 # CONFIG = ConfigParser()
@@ -9,6 +10,7 @@ from functools import wraps
 
 
 class ConfigContext:
+    """A POD for collecting some state."""
     def __init__(self):
         self.default_config = ConfigParser()
         self.config = ConfigParser()
@@ -19,6 +21,7 @@ _current_context = ConfigContext()
 
 
 def get_default_context():
+    """Returns the default ConfigContext"""
     return _current_context
 
 
@@ -30,8 +33,25 @@ def write_default_config(fp, *, context = _current_context):
     context.default_config.write(fp)
 
 
-def Config(section, name, *, default=None, arg_name=None, accessor='get', context=_current_context):
+def read_config(fp, *, context = _current_context):
+    """Reads a configuration from the given file pointer."""
+    context.config.read_file(fp)
 
+
+def read_config_file(file, *, create_default = True, context = _current_context):
+    """Reads a configuration from the given file.
+
+    Creates the file with default values, if `create_default` is `True`."""
+    if not os.path.exists(file) and create_default:
+        with open(file, 'w') as fp:
+            write_default_config(fp, context=context)
+
+    with open(file, 'r') as fp:
+        read_config(fp, context=context)
+
+
+
+def Config(section, name, *, default=None, arg_name=None, accessor='get', context=_current_context):
     """Decorator to bind configuration keys to function arguments"""
 
     key = f"{section}.{name}"
